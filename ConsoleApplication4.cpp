@@ -1,7 +1,9 @@
 ﻿#include <iostream>
-#include <string>
 #include <windows.h>
 #include <fstream>
+#include <stdio.h>
+#include <string.h>
+#define numberOfUniqueSymbols 256
 using namespace std;
 int checkInput(int floor = (numeric_limits<int>::min)(), int ceiling = (numeric_limits<int>::max)()) {
     int num;
@@ -74,26 +76,41 @@ void mainMenu() {
     cout << "11. Выход" << endl;
     cout << "Введите число, соответствующее нужному вам действию: ";
 }
-int linearSearch(char* txt, char* word) {
+int linearSearch(char* txt, char word[]) {
     int textLength = my_StrLen(txt);
     int wordLength = my_StrLen(word);
-    for (int i = 0; i <= textLength - wordLength; i++) {
+    for (int i = 0; i <= textLength - wordLength; ++i) {
         int j;
-        for (j = 0; j < wordLength; j++) {
+        for (j = 0; j <= wordLength; ++j)
             if (txt[i + j] != word[j])
-                break;
-        }
+                break;     
         if (j == wordLength)
             return i;
     }
     return -1;
+}
+int BoyerMoore(char* txt, char* subsequence, int lenTxt, int lenSub) {
+    int table[numberOfUniqueSymbols];
+    int step = 0;  
+    for (int i = 0; i <= numberOfUniqueSymbols - 1; i++)
+        table[subsequence[i]] = i;
+    for (int i = 0; i <= lenTxt; i++) {
+        for (int j = lenSub - 1; j >= 0; j--) {
+            if (txt[j] != subsequence[j + i]) {
+                step = j - table[subsequence[j + i]];
+                i = i + step;
+            }
+        }
+        return i;
     }
+    return -1;
+}
 int main(){
     setlocale(LC_ALL, "");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     const int N = 550;
-    char Str[N];
+    char Str[N] = {' '};
     int choice;
     do {
         mainMenu();
@@ -103,25 +120,26 @@ int main(){
             system("cls");
             cout << "Введите последовательность с клавиатуры: ";
             cin.getline(Str, N, '.');
+            del(Str, my_StrLen(Str), 0);
             cin.sync();
             int StrLength = my_StrLen(Str);
             break;
         }
         case 2: {
             system("cls");
-            cout << "Введите последовательность из файла: ";
-            ifstream i_File;  
-            i_File.open("C:\\sentense.txt", ios::binary);  
-            if (!i_File.is_open()) 
-            {
+            cout << "Введенная вами из файла строка: ";
+            const char* filePath = "C:/sentence.txt";
+            ifstream file(filePath, ios::in);
+            if (!file.is_open()) {
                 cout << "Открыть файл не удалось! \n";
                 return -1;
             }
-            i_File.read((char*)Str, sizeof(Str)); 
-            i_File.close(); 
+            file.read((char*)Str, sizeof(Str)); 
+            file.close();
 
-            for (int i = 0; i < my_StrLen(Str); ++i) // временно выводим для проверки работы кода
+            for (int i = 0; i < my_StrLen(Str); ++i)
                 cout << Str[i];
+            cout << endl;
             break;
         }
         case 3: {
@@ -193,22 +211,47 @@ int main(){
             char word[N];
             cout << "Введите подпоследовательность, которую хотите найти: ";         
             cin.clear();
+            cin.sync();
             cin.getline(word, size, '.');
+            del(word, my_StrLen(word), 0);
             cin.sync();
             int result = linearSearch(Str, word);
             if (result == -1)
                 cout << "Подстрока не найдена" << endl;
             else
-                cout << "Подстрока найдена в позиции: " << result << endl;
+                cout << "Подстрока найдена на позиции " << result << endl;
+            cout << endl;
             break;
         }
         case 9: {
             system("cls");
+            const int size = 50;
+            char word[N];
+            cout << "Введите подпоследовательность, которую хотите найти: ";
+            cin.clear();
+            cin.getline(word, size, '.');
+            del(word, my_StrLen(word), 0);
+            cin.sync();
+            int pi[N];
+            prefix_function(Str, pi, N);
+            //prefix_find(Str, char* obr, size_t* pi, int (*f)(size_t));
             break;
         }
-        case 10: {}
+        case 10: {
             system("cls");
+            const int size = 50;
+            char word[N];
+            cout << "Введите подпоследовательность, которую хотите найти: ";
+            cin.clear();
+            cin.getline(word, size, '.');
+            cin.sync();
+            int result = BoyerMoore(Str, word, my_StrLen(Str), my_StrLen(word));
+            if (result >= 0)
+                cout << "Подпоследовательность была найдена на позиции " << result << endl;
+            else
+                cout << "Подпоследовательность не найдена ;(" << endl;     
             break;
+        }
         }
         if (choice != 11)
             system("pause");
