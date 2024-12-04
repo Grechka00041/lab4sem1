@@ -71,9 +71,8 @@ void mainMenu() {
     cout << "6. Вывести на экран слова последовательности в обратном порядке" << endl;
     cout << "7. Вывести все слова исходной последовательности на экран вертикально" << endl;
     cout << "8. Линейный поиск подстроки" << endl;
-    cout << "9. Поиск подстроки, алгоритм КМП" << endl;
-    cout << "10. Поиск подстроки, алгоритм Бойера-Мура" << endl;
-    cout << "11. Выход" << endl;
+    cout << "9. Поиск подстроки, алгоритм Бойера-Мура" << endl;
+    cout << "10. Выход" << endl;
     cout << "Введите число, соответствующее нужному вам действию: ";
 }
 int linearSearch(char* txt, char word[]) {
@@ -128,7 +127,7 @@ int main(){
         case 2: {
             system("cls");
             cout << "Введенная вами из файла строка: ";
-            const char* filePath = "C:/sentence.txt";
+            const char* filePath = "C:/test/hmm.txt";
             ifstream file(filePath, ios::in);
             if (!file.is_open()) {
                 cout << "Открыть файл не удалось! \n";
@@ -211,7 +210,6 @@ int main(){
             char word[N];
             cout << "Введите подпоследовательность, которую хотите найти: ";         
             cin.clear();
-            cin.sync();
             cin.getline(word, size, '.');
             del(word, my_StrLen(word), 0);
             cin.sync();
@@ -230,20 +228,6 @@ int main(){
             cout << "Введите подпоследовательность, которую хотите найти: ";
             cin.clear();
             cin.getline(word, size, '.');
-            del(word, my_StrLen(word), 0);
-            cin.sync();
-            int pi[N];
-            prefix_function(Str, pi, N);
-            //prefix_find(Str, char* obr, size_t* pi, int (*f)(size_t));
-            break;
-        }
-        case 10: {
-            system("cls");
-            const int size = 50;
-            char word[N];
-            cout << "Введите подпоследовательность, которую хотите найти: ";
-            cin.clear();
-            cin.getline(word, size, '.');
             cin.sync();
             int result = BoyerMoore(Str, word, my_StrLen(Str), my_StrLen(word));
             if (result >= 0)
@@ -253,9 +237,9 @@ int main(){
             break;
         }
         }
-        if (choice != 11)
+        if (choice != 10)
             system("pause");
-    } while (choice != 11);
+    } while (choice != 10);
 }
 
 
